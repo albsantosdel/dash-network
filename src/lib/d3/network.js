@@ -108,7 +108,7 @@ export default class NetworkD3 {
 
         const sizeChange = change.width || change.height;
         const dataChange = change.data;
-        const linkWidthChange = change.linkWidth || change.maxLinkWidth;
+        const linkWidthChange = change.linkWidth; //|| change.maxLinkWidth;
         const radiusChange = change.nodeRadius;
 
         if(sizeChange) {
@@ -164,6 +164,7 @@ export default class NetworkD3 {
                 self.linkData[i] = {
                     source: nodeMap[linkDatai.source],
                     target: nodeMap[linkDatai.target],
+                    width: linkDatai.width,
                     index: i
                 };
             }
@@ -215,7 +216,10 @@ export default class NetworkD3 {
                 maxFoundWidth = Math.max(maxFoundWidth, d.width || 0);
             });
             maxFoundWidth = maxFoundWidth || 1;
-            self.links.attr('width', d => (d.width * maxLinkWidth / maxFoundWidth) || linkWidth);
+            self.links.each(d=> {
+                d._w = (d.width * maxLinkWidth / maxFoundWidth) || linkWidth;
+            })
+            self.links.attr('stroke-width', d => d._w);
         }
 
         if(dataChange || radiusChange) {
